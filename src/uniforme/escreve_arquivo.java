@@ -19,19 +19,16 @@ public class escreve_arquivo{
 	private DataOutputStream dataOutput;
     private DataOutputStream dataOutputOmnet;
     private DataOutputStream dataOutputPetri;
-	
-//	private Project project;
-//	private Scenery scenery;
+    
+    private Map<String,Integer> numberOfPacks = new HashMap<String,Integer>();
 
-	/***************************************************************************/
-	//GEORGE HARINSON
-	private Conversao conversao; //OK
-	private double rate, frequency; //OK
-	private int packetSize,numberPackets,FlitSize;//OK
-	private int dimX, dimY, flitWidth, flitClockCycles; //OK
-	private double Rates[] = {10,20,30,40};//OK
-	private Integer [] nPackets;//OK
-	private Integer [] nFlits;//OK
+	private Conversao conversao;
+	private double rate, frequency;
+	private int packetSize,numberPackets,FlitSize;
+	private int dimX, dimY, flitWidth, flitClockCycles;
+	private double Rates[] = {10,20,30,40};
+	private Integer [] nPackets;
+	private Integer [] nFlits;
 	int priorityO;
 
 
@@ -40,17 +37,12 @@ public class escreve_arquivo{
         //int auxprintomnet = 0;
       
 
-        //O cadore que tá dizendo e eu to fazendo
-
         Vector <String> alvo = new Vector();
         Vector <String> dstOmnet = new Vector(); //Vetor com destinos para OMNeT
         Vector <String> dstPetri = new Vector(); //Vetor com destinos para Rede Petri
        
         int a = 0;
         int b = 0;
-        
-
-        //Apagar se não der certo
 	
 	private String scenarioPath;
 	private Dados Petri;
@@ -131,8 +123,9 @@ public class escreve_arquivo{
 
         public Vector<String> gera_destino_petri(){//Vector<String> alvo
                        
-            for(int i=0;i<alvo.size();i++){
-            int x,y,soma;
+            for(int i=0;i<alvo.size();i++)
+            {
+            	int x,y,soma;
 
                 x = Integer.parseInt(alvo.get(i).substring(0,1))+1;
                 y = Integer.parseInt(alvo.get(i).substring(1,2))+1;
@@ -140,27 +133,13 @@ public class escreve_arquivo{
                 
             }
 
-            /*for(int i=0;i<alvo.size();i++){
-
-                System.out.println("DESTINO_PETRI: " + dstPetri.get(i));
-
-            }*/
-
             return dstPetri;
         }
 
-         public void gera_destino_omnet(){//Vector<String> alvo @Rafael
-             
-            //Vector<String> sources = new Vector();
-            
+         public void gera_destino_omnet()
+         {            
             for(int i=0;i<alvo.size();i++)
-                 dstOmnet.add(Conversao.dstCabaOmnet(alvo.get(i), dimY)); //Retorna id para o OMNeT                 
-            
-            /*for(int i=0;i<alvo.size();i++){
-
-                System.out.println("DESTINO_OMELETE: " + dstOmnet.get(i));
-
-            }*/
+                 dstOmnet.add(Conversao.dstCabaOmnet(alvo.get(i), dimY));       
          }
 
 
@@ -168,117 +147,102 @@ public class escreve_arquivo{
 	* ESCREVE O TRAFEGO DA REDE DE ACORDO COM OS PAR�METROS MOSTRADOS. Especificados pelo usu�rio.
 	*/
 
-	public void writeTraffic(String target,String Caminho,double rate){
-		File diretory,diretory1,diretory2;
+	public void writeTraffic(String target,String Caminho,double rate)
+	{
+		File diretory;
 		double pkt_tx, flt_tx, localRate;
 		
-                scenarioPath=Caminho;
-		//cria o diret�rio que conter� os arquivos de trafego FLI para NoC
+        scenarioPath=Caminho;
 		diretory = new File(scenarioPath+"\\In");
-                /*diretory1 = new File(scenarioPath+"\\Omnet");
-                diretory2 = new File(scenarioPath+"\\Petri");*/
-		diretory.mkdirs();
-               /* diretory1.mkdirs();
-                diretory2.mkdirs();*/
 
-		//diretory = new File(scenarioPath+"\\Out");
-		//diretory.mkdirs();
+		diretory.mkdirs();
             
 
 		sACG="";
-		for(int y=0;y<dimY;y++){
-			for(int x=0;x<dimX;x++){
-				try{
-					//ip = scenery.getIP(x,y); verificar isso depois
+		for(int y=0;y<dimY;y++)
+		{
+			for(int x=0;x<dimX;x++)
+			{
+				try
+				{
+						//Create files for all routers
+						file=new FileOutputStream(scenarioPath+"\\In\\in"+formatAddress(x,y)+".txt");
 
-					//file=new FileOutputStream(scenarioPath+"\\In\\in"+(y*dimX+x)+".txt");
-                                        file=new FileOutputStream(scenarioPath+"\\In\\in"+formatAddress(x,y)+".txt");
-                                        /*fileOmnet=new FileOutputStream(scenarioPath+"\\Omnet\\"+Conversao.dstCabaOmnet(x, y, dimY));
-                                        filePetri=new FileOutputStream(scenarioPath+"\\Petri\\flits"+String.valueOf(x+1)+String.valueOf(y+1)+".txt");*/
-                                        dataOutput=new DataOutputStream(file);
-                                        /*dataOutputOmnet=new DataOutputStream(fileOmnet);
-                                        dataOutputPetri=new DataOutputStream(filePetri);*/
-                                        //private double Rates[] = {10,20,30,40};//OK
-					writeLinesPS(target,x,y,numberPackets,rate,targetX,targetY);//TEm que colocar as vari�veis ainda
-                                        //writeLinesOmnet(dimY,x,y,numberPackets);
-                                        //writeLinesRedePetri(x+1,y+1,numberPackets); @Rafael comentei
-                                        //writeLinesRedePetri(x,y,numberPackets); //@Rafael acrescentei
-                                        //writeLinesRedePetri(int x,int y, int numberPackets)
+						dataOutput=new DataOutputStream(file);
 
+						//Format and print packets
+						writeLinesPS(target,x,y,numberPackets,rate,targetX,targetY);
 
+						dataOutput.close();
 
-					dataOutput.close();
-                                        /*dataOutputOmnet.close();
-                                        dataOutputPetri.close();
-*/
-
-					}
-
-                                catch(Exception e){System.out.println("Erro");}
 				}
+
+                catch(Exception e)
+				{
+                	System.out.println("Erro");
+                }
+			}
 
 			}
 		}
 
-		//Fim m�todo que ir� gerar os arquivos de entrada para o trafego UNIFORME 1� a ser gerado.  George Harinson
-	/****Metodo que escreve os dados para a rede OMNET
-        ***/
-        public void writeLinesOmnet(int dimY,int x,int y, int numberPackets){
+        public void writeLinesOmnet(int dimY,int x,int y, int numberPackets)
+        {
+           try
+           {
 
+        	   for(int i=0;i<numberPackets;i++)
+        	   {
+        		   String linha="";
+        		   linha = dstOmnet.get((x*numberPackets)+(y*numberPackets*dimX)+i);
 
-                    try{
+        		   dataOutputOmnet.writeBytes(linha+"\r\n");
 
-                        for(int i=0;i<numberPackets;i++)
-                        {
-                        String linha="";
+        	   }
 
-                        linha = dstOmnet.get((x*numberPackets)+(y*numberPackets*dimX)+i);
+           }
 
-                        dataOutputOmnet.writeBytes(linha+"\r\n");
-
-                        }
-
-                    }
-
-                    catch(Exception e){System.out.println("escrita da linha SAI AQUI Cath OMNET EXCEÇÂO");}
+           catch(Exception e)
+           {
+        	   System.out.println("exeption at write Line to OMNeT");
+           }
         }
 
 
         /**
          Metodo para escrever os arquivos da REDE de Petri em arquivos txt
          **/
-        public void writeLinesRedePetri(int x,int y, int numberPackets){
+        public void writeLinesRedePetri(int x,int y, int numberPackets)
+        {
 
             char desX,desY;
             String linha="";
-                    try{
+            try
+            {
 
-                        for(int i=1;i<=numberPackets;i++)
-                        {
-                            linha = dstPetri.get((x*numberPackets)+(y*numberPackets*dimX)+(i-1)); //@Rafael Modificado -1
+            	for(int i=1;i<=numberPackets;i++)
+            	{
+            		linha = dstPetri.get((x*numberPackets)+(y*numberPackets*dimX)+(i-1));
 
-                            desX = linha.charAt(0);
-                            desY = linha.charAt(1);
-                            //Petri.num_flits(x,y,desX,desY,i); //@Rafael comentei
-                            
+            		desX = linha.charAt(0);
+            		desY = linha.charAt(1);                            
 
-                            //dataOutputPetri.writeBytes(linha+"\r\n");
-                            dataOutputPetri.writeBytes(Petri.num_flits(x+1,y+1,desX,desY,i)+"\r\n"); //@Rafael acrescentei
-                            //dataOutputPetri.writeBytes(Petri.num_flits(x+1,y+1,desX,desY,i)+"\r\n"); @Rafael comentei
+            		dataOutputPetri.writeBytes(Petri.num_flits(x+1,y+1,desX,desY,i)+"\r\n");
 
-                        }
 
-                    }
+            	}
 
-                    catch(Exception e){System.out.println("escrita da linha SAI AQUI Cath CPNoC EXCEÇÂO");}
+            }
+
+            catch(Exception e)
+            {
+            	System.out.println("Exception at Write Line to Petri");
+            }
         }
  
 
-
-	/**
-	* Escreve as linhas do arquivo quando o chaveamento � por pacotes (Packet Switching)
-	*///colocar as vari�veis ainda para funcionar
-	public void writeLinesPS(String target, int x, int y ,int numberPackets, double Rate, int targetX, int targetY){
+	public void writeLinesPS(String target, int x, int y ,int numberPackets, double Rate, int targetX, int targetY)
+	{
 
 		String linha,payload="";
 		String target2 = target;  //Ponto para variação da distribuição espacial --->>> Colocar como parâmetro
@@ -289,33 +253,19 @@ public class escreve_arquivo{
 		String[] timestampHex;
                 
 		int destinoX,destinoY;
-                destinoX=targetX;
-                destinoY=targetY;
-		
-		//gera o tempo em que cada pacote deve entrar na rede
-		//DistTime distTime = new DistTime(ip,flitWidth,flitClockCycles);
-		//Vector vet = distTime.defineTime();
-		//public DistTime(int flitWidth,int flitClockCycles, double Frequency,int PacketSize,int NumberPackets,double Rate){
-                //public DistTime(int flitWidth,int flitClockCycles, double Frequency,int PacketSize,int NumberPackets,double Rate){
-                //System.out.println("Rate" + Rate);
-                DistTime distTime = new DistTime(flitWidth,flitClockCycles,frequency,packetSize,numberPackets,Rate);//ok
-                //System.out.println("AQUI");
-		Vector vet = distTime.uniform();//ok
-                //System.out.println("VETOR " + vet.size());
-				
+        destinoX=targetX;
+        destinoY=targetY;
 
+        DistTime distTime = new DistTime(flitWidth,flitClockCycles,frequency,packetSize,numberPackets,Rate);//ok
 
-		/*for(int i=0;i<vet.size();i++){
-		 System.out.println("VETOR " + vet.get(i));
-		}
-*/
-                
+		Vector vet = distTime.uniform();
+           
 
 		try{
                         
-                       // System.out.println("TESTES THOR");
-			for(int j=0;j<numberPackets;j++){
-                                String aux= null;
+			for(int j=0;j<numberPackets;j++)
+			{
+                String aux= null;
 				linha="";
 /***************************************************************************************/
 /*    TIMESTAMP INICIAL
@@ -326,58 +276,31 @@ public class escreve_arquivo{
 /***************************************************************************************/
 /*    1� FLIT = PRIORITY (HIGH) +  TARGET (LOW)
 /***************************************************************************************/
-				priority = conversao.decimal_hexa(priorityO,(flitWidth/8));
-				//priority = conversao.decimal_hexa(ip.getPriority(),(flitWidth/8));
-				//System.out.println("PRIORITY: "+ priority);
-				//sourceX = ip.getAddressX();
-				//sourceY = ip.getAddressY();
-				//targetX = ip.getTargetX();
-				//targetY = ip.getTargetY();				
+				priority = conversao.decimal_hexa(priorityO,(flitWidth/8));				
 				
 				sourceX=x;
 				sourceY=y;
-                               // System.out.println("X Y AQUI" + target2 + sourceX + sourceY);
-				//System.out.println("TARGET: " + target);
 				
-				
-				
-                               //AQUI OHOOOOOOOOOOO
-                               // target = distSpatial.defineTarget(target2,sourceX,sourceY,targetX,targetY); //GENERATE ATLAS
-                                //target = alvo.get(j+a*numberPackets);
-                                target = alvo.get((x*numberPackets)+(y*numberPackets*dimX)+j);
-
-                                  
-
-                                //System.out.println("x: "+ x + " y: " + y + "Pac: " + j);
-
-                               
-
-                                //System.out.println("TARGET: " + target);
+				//Do modification with SourceX, SourceY, TargetX, TargetY and number of lines.
+  
+                target = alvo.get((x*numberPackets)+(y*numberPackets*dimX)+j);
 
 				iTarget= conversao.nodoToInteger(target.substring(target.length()-2,target.length()),dimX,FlitSize);
-
-                                //System.out.println("iTARGET: " + iTarget);
                              
 				linha=linha.concat(priority + target+" ");
 /***************************************************************************************/
 /*    2� FLIT = SIZE            
 /***************************************************************************************/
-                                //System.out.println("LINHA: " + linha);
+
 				packetSize1=packetSize;
 				payloadSize = packetSize - 6; //6 pq 2 s�o header e 4 s�o o timestampHex da rede inserido pelo fli
 				linha=linha.concat(addLineByte(Integer.toHexString(payloadSize).toUpperCase()," "));
-				//linha=linha.concat(" ");
-                                //System.out.println("Linha: "+ linha);
-                                //System.out.println("VAMOS VER AQUI 111111111111112222222 George");
+                  
+                nPackets[iTarget]++;
 
-                                  
-                                nPackets[iTarget]++;
-                                //System.out.println("nPackets " + nPackets[iTarget]);
 				nFlits[iTarget]+=packetSize;
-                               // System.out.println("nFlits " + nFlits.length);
 				totalFlits+=packetSize;
-                               // System.out.println("totalFlits " + totalFlits.SIZE);
-                               // System.out.println("Passo aqui AGORA: dfiuwhefw");
+
 
 
 /***************************************************************************************/
@@ -385,14 +308,13 @@ public class escreve_arquivo{
 /***************************************************************************************/
                                 
 				linha=linha.concat(formatAddress(x,y)+" ");
-                                //System.out.println("Linha formateAddress: " + linha);
+
 /***************************************************************************************/
 /*    4� - 7� FLITS = TIMESTAMP HEXA
 /***************************************************************************************/
 				timestampHex = getTimestamp((String)vet.get(j));
 				linha=linha.concat(timestampHex[3]+" "+timestampHex[2]+" "+timestampHex[1]+" "+timestampHex[0]+" ");
-                                //System.out.println("VAMOS VER AQUI 2222");
-                                //System.out.println(""+linha);
+
                                
 /***************************************************************************************/
 /*    8� AND 9� FLIT = SEQUENCE NUMBER
@@ -412,12 +334,11 @@ public class escreve_arquivo{
 /***************************************************************************************/
 /*    PAYLOAD
 /***************************************************************************************/
-				if(j==0){
-					//Escreve o tamanho do payload do pacote
-					//Se o tamanho do payload n�o preencher a largura do flit, completa com zeros.
-					//Ex: flitWidth=8 payloadSize=4 resultado=04
-					counter=8; //comeca em 8 pq 1 � source, 2 a 5 � timestampHex e 6 e 7 � sequencia
-					for(int l=counter;l<=payloadSize;l++){
+				if(j==0)
+				{
+					counter=8; 
+					for(int l=counter;l<=payloadSize;l++)
+					{
 
 						if(l==payloadSize) //n�o coloca espa�o se � o �ltimo flit do payload
 							payload=payload.concat(addLineByte(Integer.toHexString(0).toUpperCase(),""));
@@ -432,23 +353,16 @@ public class escreve_arquivo{
 				}
 				linha=linha.concat(payload);
 
-				dataOutput.writeBytes(linha+"\r\n");
-                                //System.out.println("!!!" + linha);
-                                //System.out.println("!!!" + dstOmnet.get(auxprintomnet));
-                                //dataOutputOmnet.writeBytes(dstOmnet.get(auxprintomnet) +"\r\n");
-                                //auxprintomnet++;
-                              
-			}
-
-                        //a++;
+				dataOutput.writeBytes(linha+"\r\n");                              
+			}                     
 		}
-
                 catch(Exception e){System.out.println("escrita da linha SAI AQUI Cath EXCEÇÂO");}
 	}
 
 	
 
-	private String addLineByte(String data,String separador){
+	private String addLineByte(String data,String separador)
+	{
 		if(data!=null){
 			int sizeEsperado=flitWidth/4;
 			int sizeData=data.length();
@@ -463,7 +377,8 @@ public class escreve_arquivo{
 		return separador;
 	}
 
-	private String[] getTimestamp(double value){
+	private String[] getTimestamp(double value)
+	{
 		String[] timestampHex=new String[4];
 		for(int i=0;i<4;i++){ //4 � o n�mero de flits correspondente ao timestampHex
 			timestampHex[i]="";
