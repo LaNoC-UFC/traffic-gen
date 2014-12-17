@@ -39,10 +39,11 @@ public class Main
     	} 
     	else 
     	{    		
-    		dimX=4; //X dimension
-    		dimY=4; //Y dimension
+    		dimX=2; //X dimension
+    		dimY=2; //Y dimension
     		n_pck=10; //100 packets per core
     		Flits=100; //#flits
+    		rates.add(20.0);
     		rates.add(80.0);
     		flitWidth=16;
     	}
@@ -57,13 +58,19 @@ public class Main
        
         escreve_arquivo teste = new escreve_arquivo(dimX,dimY,flitWidth,1,flitWidth,n_pck,Flits,50.0,desX,desY,"msg");
         
+        
         teste.gera_destinos(str,dimX,dimY,n_pck,desX,desY);
         //teste.gera_destino_petri();
         //teste.gera_destino_omnet();
         
 
         for(int i=0; i < rates.size();i++)
+        {
              teste.writeTraffic(str,caminho+"\\F"+(rates.get(i).intValue()),rates.get(i));
+             teste.printNofPcks(caminho+"\\F"+(rates.get(i).intValue())+"\\");
+        }
+        
+
         
 
         System.out.println("Done, check selected directory");

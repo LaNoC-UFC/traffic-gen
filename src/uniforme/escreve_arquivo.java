@@ -10,6 +10,7 @@ package uniforme;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 //import AtlasPackage.*;
 
@@ -54,17 +55,34 @@ public class escreve_arquivo{
 	private int sequenceNumberH=0,sequenceNumberL=1;
 	
 	
+	//Print sourceXsourceY sinkXsinkY nOfPcks
+	public void printNofPcks(String path)
+	{
+		try 
+		{
+			FileWriter fw = new FileWriter(new File(path+"nPcks"));
+			for(String key : numberOfPacks.keySet())
+			{
+				fw.write(key+" "+numberOfPacks.get(key)+"\n");
+			}
+			
+			fw.close();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		//Re-initialize numberOfPacks to different OferredLoads
+		this.numberOfPacks.clear();	
+		
+	}
 	
-	/**
-	* M�todo construtor da classe escreve arquivo
-	*/
-	public escreve_arquivo(int dimX,int dimY,int flitWidth,int flitClockCycles,int FlitSize, int numberPackets, int packetSize,double frequency,int targetX,int targetY,String dado){
-		//public Distribuicao(int flitWidth,int flitClockCycles,double Frequency,int PacketSize,int NumberPackets)
-		//Neste m�todo construtor eu vou colocar os par�metros
-		//(N de pacotes, tamanho do pacote, Distribui��o, TARGET = random, Frequencia, Vetor de taxas)
+	public escreve_arquivo(int dimX,int dimY,int flitWidth,int flitClockCycles,int FlitSize, int numberPackets, int packetSize,double frequency,int targetX,int targetY,String dado)
+	{
 		this.dimX=dimX;
 		this.dimY=dimY;
-                this.dado=dado;
+        this.dado=dado;
 		this.flitWidth= flitWidth;
 		this.flitClockCycles=flitClockCycles;
 		this.FlitSize =FlitSize;
@@ -100,26 +118,18 @@ public class escreve_arquivo{
         public void gera_destinos(String Target, int dimY,int dimX,int numberPackets, int targetX, int targetY ){
 
 
-            for(int y=0;y<dimY;y++){
-		for(int x=0;x<dimX;x++){
-                    for(int i=0;i<numberPackets;i++){
+            for(int y=0;y<dimY;y++)
+            {
+            	for(int x=0;x<dimX;x++)
+		{
+                    for(int i=0;i<numberPackets;i++)
+                    {
 
                         alvo.add(distSpatial.defineTarget(Target,x,y,targetX,targetY));
-
-                   // target = distSpatial.defineTarget(target2,sourceX,sourceY,targetX,targetY); //GENERATE ATLAS
                     }
                 }
             }
-
-            /*for(int i=0;i<alvo.size();i++){
-
-                System.out.println("DESTINO: " + alvo.get(i));
-
-            }*/
-
-            //System.out.println("TAMANHO ALVO: " + alvo.size());
-
-        }//Fim método
+        }
 
         public Vector<String> gera_destino_petri(){//Vector<String> alvo
                        
@@ -279,11 +289,21 @@ public class escreve_arquivo{
 				priority = conversao.decimal_hexa(priorityO,(flitWidth/8));				
 				
 				sourceX=x;
-				sourceY=y;
-				
-				//Do modification with SourceX, SourceY, TargetX, TargetY and number of lines.
-  
+				sourceY=y;							
+				  
                 target = alvo.get((x*numberPackets)+(y*numberPackets*dimX)+j);
+                
+                //Get the number of pcks per flux
+                String HashKey = sourceX+""+sourceY+" "+target;
+                if(!numberOfPacks.containsKey(HashKey))
+				{
+					numberOfPacks.put(HashKey, 1);
+				}
+				else
+				{	System.out.println(HashKey+" "+numberOfPacks.get(HashKey));														
+					numberOfPacks.put(HashKey, numberOfPacks.get(HashKey)+1);
+					System.out.println(HashKey+" "+numberOfPacks.get(HashKey));
+				}
 
 				iTarget= conversao.nodoToInteger(target.substring(target.length()-2,target.length()),dimX,FlitSize);
                              
