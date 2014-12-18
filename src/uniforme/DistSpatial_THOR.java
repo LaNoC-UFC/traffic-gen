@@ -68,7 +68,7 @@ public class DistSpatial_THOR{
 	}
 
 	/**
-	* Define o nodo destino do nodo origem informado por par�metro de forma rand�mica.
+	* Define o nodo destino
 	*/
 	public String random(int addX,int addY){
 		int targetX,targetY;
@@ -80,6 +80,7 @@ public class DistSpatial_THOR{
 		}while(addX==targetX && addY==targetY);
 		return formatAddress(targetX,targetY);
 	}
+	
 
        public String random_2(int addX,int addY){
 		int targetX,targetY;

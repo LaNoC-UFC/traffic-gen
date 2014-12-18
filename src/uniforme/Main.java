@@ -39,9 +39,9 @@ public class Main
     	} 
     	else 
     	{    		
-    		dimX=2; //X dimension
-    		dimY=2; //Y dimension
-    		n_pck=10; //100 packets per core
+    		dimX=4; //X dimension
+    		dimY=4; //Y dimension
+    		n_pck=1000; //100 packets per core
     		Flits=100; //#flits
     		rates.add(20.0);
     		rates.add(80.0);
@@ -49,25 +49,21 @@ public class Main
     	}
     	
         int desX=2,desY=2; //for hot spot
-        String str ="random"; //uniform -> random ; else -> hot spot
+        String distrib ="random"; //uniform -> random ; else -> hot spot
         //double rates[] = {80.0};
        
         caminho = variaveis.chooser();
-        
-        
-       
+                     
         escreve_arquivo teste = new escreve_arquivo(dimX,dimY,flitWidth,1,flitWidth,n_pck,Flits,50.0,desX,desY,"msg");
-        
-        
-        teste.gera_destinos(str,dimX,dimY,n_pck,desX,desY);
-        //teste.gera_destino_petri();
-        //teste.gera_destino_omnet();
-        
 
-        for(int i=0; i < rates.size();i++)
+        ArrayList<String> sinks = new ArrayList<String>();
+        genSinks genS = new genSinks(dimX,dimY,flitWidth);
+
+        for(Double rate : rates)
         {
-             teste.writeTraffic(str,caminho+"\\F"+(rates.get(i).intValue()),rates.get(i));
-             teste.printNofPcks(caminho+"\\F"+(rates.get(i).intValue())+"\\");
+        	 sinks = genS.doSinks(distrib,dimX,dimY,n_pck,desX,desY);
+             teste.writeTraffic(sinks, distrib,caminho+"\\F"+(rate.intValue()),rate);
+             teste.printNofPcks(caminho+"\\F"+(rate.intValue())+"\\");
         }
         
 
