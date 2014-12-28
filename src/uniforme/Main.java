@@ -5,6 +5,7 @@
 
 package uniforme;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -38,12 +39,12 @@ public class Main
     			rates.add(Double.parseDouble(rate));
     	} 
     	else 
-    	{    		
-    		dimX=4; //X dimension
-    		dimY=4; //Y dimension
-    		n_pck=1000; //100 packets per core
-    		Flits=100; //#flits
-    		rates.add(20.0);
+    	{
+    		dimX=11; //X dimension
+    		dimY=11; //Y dimension
+    		n_pck=110; //packets per core
+    		Flits=17; //#flits
+    		//rates.add(20.0);
     		rates.add(80.0);
     		flitWidth=16;
     	}
@@ -52,8 +53,9 @@ public class Main
         String distrib ="random"; //uniform -> random ; else -> hot spot
         //double rates[] = {80.0};
        
-        caminho = variaveis.chooser();
-                     
+        //caminho = variaveis.chooser();
+        caminho = ".";
+
         escreve_arquivo teste = new escreve_arquivo(dimX,dimY,flitWidth,1,flitWidth,n_pck,Flits,50.0,desX,desY,"msg");
 
         ArrayList<String> sinks = new ArrayList<String>();
@@ -62,8 +64,8 @@ public class Main
         for(Double rate : rates)
         {
         	 sinks = genS.doSinks(distrib,dimX,dimY,n_pck,desX,desY);
-             teste.writeTraffic(sinks, distrib,caminho+"\\F"+(rate.intValue()),rate);
-             teste.printNofPcks(caminho+"\\F"+(rate.intValue())+"\\");
+             teste.writeTraffic(sinks, distrib,caminho+File.separator+"F"+(rate.intValue()),rate);
+             teste.printNofPcks(caminho+File.separator+"F"+(rate.intValue())+File.separator);
         }
         
 

@@ -1,13 +1,5 @@
 
 package uniforme;
-//package AtlasPackage;
-
-/*
-* @(#)Conversao.java  1.0  30/03/2001
-*
-* Aline Vieira de Mello
-* Pontif�cia Universidade Cat�lica do Rio Grande do Sul - Faculdade de Inform�tica
-*/
 
 /**
 * <i>Convers�o</i> converte valores do tipo HEXADECIMAL, DECIMAL e BINARIO.
@@ -494,20 +486,19 @@ public class Conversao{
 		int y = nodo / nRotX;
 
 		//Gerando destino na horizontal
-		String nodoXBin=decimal_binario(x,(flitSize/4));
+		String nodoXBin=decimal_binario(x,(flitSize/2));
 		//Gerando destino na vertical
-		String nodoYBin=decimal_binario(y,(flitSize/4));
+		String nodoYBin=decimal_binario(y,(flitSize/2));
 		 //concatena nodoX e nodoY
 		String nodoBin=nodoXBin+nodoYBin;
-		return binario_hexa(nodoBin,(flitSize/8));
+		return binario_hexa(nodoBin,(flitSize/4));
 	}
 
 	/**
 	* captura o valor do endere�o X no nodo (XY)
 	*/
 	public int getX(String nodo,int flitSize){
-		String nodoBin = hexa_binario(nodo,flitSize/2); //o nodo corresponde a metade de um flit
-		String nodoX = nodoBin.substring(0,nodoBin.length()/2);
+		String nodoX = hexa_binario(nodo.substring(0,nodo.length()/2),flitSize/2);
 		return binario_decimal(nodoX);
 	}
 
@@ -515,8 +506,8 @@ public class Conversao{
 	* captura o valor do endere�o Y no nodo (XY)
 	*/
 	public int getY(String nodo,int flitSize){
-		String nodoBin = hexa_binario(nodo,flitSize/2); //o nodo corresponde a metade de um flit
-		String nodoY = nodoBin.substring(nodoBin.length()/2);
+		String nodoY = hexa_binario(nodo.substring(nodo.length()/2),flitSize/2);
+		//String nodoY = nodoBin.substring(nodoBin.length()/2);
 		return binario_decimal(nodoY);
 	}
 

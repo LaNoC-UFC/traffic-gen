@@ -1,17 +1,7 @@
 package uniforme;
 
-/*
- * @(#)Escreve arquivo
- *
- * @George Harinson Martins Castro
- * THOR - LESC - UFC - Universidade Federal do Cear�
- * 
- */
-import java.awt.*;
 import java.io.*;
 import java.util.*;
-
-import javax.swing.*;
 
 public class escreve_arquivo {
 
@@ -35,7 +25,7 @@ public class escreve_arquivo {
 	private String core, address, target, distTime, dado;
 	private int addressX, addressY, targetX, targetY;
 
-	//ArrayList<String> sinks = new ArrayList<String>();
+	// ArrayList<String> sinks = new ArrayList<String>();
 	Vector<String> dstOmnet = new Vector();
 	Vector<String> dstPetri = new Vector();
 
@@ -52,33 +42,25 @@ public class escreve_arquivo {
 	private int sequenceNumberH = 0, sequenceNumberL = 1;
 
 	// Print sourceXsourceY sinkXsinkY nOfPcks
-	public void printNofPcks(String path) 
-	{
-		try 
-		{
-			Formatter output = new Formatter(path +"nPcksMatrix");
-			
-			for(int x=0;x<(dimX*dimY-1);x++)
-			{
-				for(int y=0;y<(dimY*dimX-1);y++)
-				{
+	public void printNofPcks(String path) {
+		try {
+			Formatter output = new Formatter(path + "nPcksMatrix");
+
+			for (int x = 0; x < (dimX * dimY - 1); x++) {
+				for (int y = 0; y < (dimY * dimX - 1); y++) {
 					output.format("%d \t", nPcks[x][y]);
 				}
 				output.format("\r\n");
 			}
-			
-			
+
 			FileWriter fw = new FileWriter(new File(path + "nPcksHash"));
-			for (String key : numberOfPacks.keySet()) 
-			{
+			for (String key : numberOfPacks.keySet()) {
 				fw.write(key + " " + numberOfPacks.get(key) + "\n");
 			}
 
 			fw.close();
 			output.close();
-		} 
-		catch (IOException e) 
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -91,9 +73,9 @@ public class escreve_arquivo {
 			int flitClockCycles, int FlitSize, int numberPackets,
 			int packetSize, double frequency, int targetX, int targetY,
 			String dado) {
-		
-		nPcks = new int [dimX*dimY][dimX*dimY];
-		
+
+		nPcks = new int[dimX * dimY][dimX * dimY];
+
 		this.dimX = dimX;
 		this.dimY = dimY;
 		this.dado = dado;
@@ -104,7 +86,7 @@ public class escreve_arquivo {
 		distSpatial = new DistSpatial_THOR(dimX, dimY, flitWidth);
 		Petri = new Dados(numberPackets, packetSize, dado);
 		nPackets = new Integer[dimX * dimY];
-		
+
 		for (int i = 0; i < dimX * dimY; i++)
 			nPackets[i] = 0;
 
@@ -117,19 +99,19 @@ public class escreve_arquivo {
 		this.frequency = frequency;
 		this.rate = rate;
 		priorityO = 0;
-		
+
 		this.targetX = targetX;
 		this.targetY = targetY;
 	}
-	
-	public void writeTraffic(ArrayList<String> sinks, String target, String Caminho, double rate) 
-	{
+
+	public void writeTraffic(ArrayList<String> sinks, String target,
+			String Caminho, double rate) {
 		File diretory;
 		double pkt_tx, flt_tx, localRate;
-		nPcks = new int [dimX*dimY][dimX*dimY];
+		nPcks = new int[dimX * dimY][dimX * dimY];
 
 		scenarioPath = Caminho;
-		diretory = new File(scenarioPath + "\\In");
+		diretory = new File(scenarioPath + File.separator + "In");
 
 		diretory.mkdirs();
 
@@ -138,14 +120,15 @@ public class escreve_arquivo {
 			for (int x = 0; x < dimX; x++) {
 				try {
 					// Create files for all routers
-					file = new FileOutputStream(scenarioPath + "\\In\\in"
+					file = new FileOutputStream(scenarioPath + File.separator
+							+ "In" + File.separator + "in"
 							+ formatAddress(x, y) + ".txt");
 
 					dataOutput = new DataOutputStream(file);
 
 					// Format and print packets
-					writeLinesPS(sinks, target, x, y, numberPackets, rate, targetX,
-							targetY);
+					writeLinesPS(sinks, target, x, y, numberPackets, rate,
+							targetX, targetY);
 
 					dataOutput.close();
 
@@ -159,9 +142,9 @@ public class escreve_arquivo {
 		}
 	}
 
-	public void writeLinesPS(ArrayList<String> sinks, String target, int x, int y, int numberPackets,
-			double Rate, int targetX, int targetY) {
-				
+	public void writeLinesPS(ArrayList<String> sinks, String target, int x,
+			int y, int numberPackets, double Rate, int targetX, int targetY) {
+
 		String linha, payload = "";
 		String target2 = target;
 
@@ -174,7 +157,8 @@ public class escreve_arquivo {
 		destinoX = targetX;
 		destinoY = targetY;
 
-		DistTime distTime = new DistTime(flitWidth, flitClockCycles, frequency,packetSize, numberPackets, Rate);
+		DistTime distTime = new DistTime(flitWidth, flitClockCycles, frequency,
+				packetSize, numberPackets, Rate);
 
 		Vector vet = distTime.uniform();
 
@@ -193,43 +177,39 @@ public class escreve_arquivo {
 
 				/***************************************************************************************/
 				/*
-				 * 1� FLIT = PRIORITY (HIGH) + TARGET (LOW)
-				 * /******************
+				 * 1� FLIT = PRIORITY (HIGH) + TARGET (LOW) /******************
 				 * *******************************************
 				 * *************************
 				 */
-				priority = conversao.decimal_hexa(priorityO, (flitWidth / 8));
+				// priority = conversao.decimal_hexa(priorityO, (flitWidth /
+				// 8));
 
 				sourceX = x;
 				sourceY = y;
 
-				target = sinks.get((x * numberPackets)
-						+ (y * numberPackets * dimX) + j);
+				target = sinks.get((x * numberPackets) + (y * numberPackets * dimX) + j);
 
 				// Get the number of pcks per flux
-				String HashKey = sourceX + "" + sourceY + " " + target;
-				int sourceN =  sourceX + sourceY*dimX;
-				int sinkN =  Character.getNumericValue(target.charAt(0)) + Character.getNumericValue(target.charAt(1))*dimX;				
-				
+				String HashKey = sourceX + "." + sourceY + " " + target;
+				int sourceN = sourceX + sourceY * dimX;
+				int sinkN;// = Character.getNumericValue(target.charAt(0)) + Character.getNumericValue(target.charAt(1)) * dimX;
+				sinkN = conversao.nodoToInteger(target, dimX, FlitSize);
+
 				nPcks[sourceN][sinkN]++;
-				
-				
-				if (!numberOfPacks.containsKey(HashKey)) 
-				{
+
+				if (!numberOfPacks.containsKey(HashKey)) {
 					numberOfPacks.put(HashKey, 1);
 				} else {
-					numberOfPacks.put(HashKey, numberOfPacks.get(HashKey) + 1);					
+					numberOfPacks.put(HashKey, numberOfPacks.get(HashKey) + 1);
 				}
 
-				iTarget = conversao.nodoToInteger(
-						target.substring(target.length() - 2, target.length()),
-						dimX, FlitSize);
+				//iTarget = conversao.nodoToInteger(target,dimX, FlitSize);
+				iTarget = sinkN;
 
-				linha = linha.concat(priority + target + " ");
+				linha = linha.concat(/* priority + */target + " ");
 				/***************************************************************************************/
 				/*
-				 * 2� FLIT = SIZE
-				 * /********************************************
+				 * 2� FLIT = SIZE /********************************************
 				 * ******************************************
 				 */
 
@@ -247,8 +227,7 @@ public class escreve_arquivo {
 
 				/***************************************************************************************/
 				/*
-				 * 3� FLIT = SOURCE
-				 * /******************************************
+				 * 3� FLIT = SOURCE /******************************************
 				 * ********************************************
 				 */
 
@@ -256,8 +235,7 @@ public class escreve_arquivo {
 
 				/***************************************************************************************/
 				/*
-				 * 4� - 7� FLITS = TIMESTAMP HEXA
-				 * /**************************
+				 * 4� - 7� FLITS = TIMESTAMP HEXA /**************************
 				 * ************************************************************
 				 */
 				timestampHex = getTimestamp((String) vet.get(j));
@@ -266,8 +244,7 @@ public class escreve_arquivo {
 
 				/***************************************************************************************/
 				/*
-				 * 8� AND 9� FLIT = SEQUENCE NUMBER
-				 * /************************
+				 * 8� AND 9� FLIT = SEQUENCE NUMBER /************************
 				 * *************************************
 				 * *************************
 				 */
@@ -365,13 +342,13 @@ public class escreve_arquivo {
 	private String formatAddress(int addX, int addY) {
 		String targetXBin, targetYBin, targetBin, zeros, targetHex;
 		// Gerando destino na horizontal
-		targetXBin = conversao.decimal_binario(addX, (flitWidth / 4));
+		targetXBin = conversao.decimal_binario(addX, (flitWidth / 2));
 		// Gerando destino na vertical
-		targetYBin = conversao.decimal_binario(addY, (flitWidth / 4));
+		targetYBin = conversao.decimal_binario(addY, (flitWidth / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
-		zeros = conversao.decimal_hexa(0, (flitWidth / 8));
-		targetHex = conversao.binario_hexa(targetBin, (flitWidth / 8));
-		targetHex = zeros + targetHex;
+		// zeros = conversao.decimal_hexa(0, (flitWidth / 8));
+		targetHex = conversao.binario_hexa(targetBin, (flitWidth / 4));
+		// targetHex = zeros + targetHex;
 		return targetHex;
 	}
 
