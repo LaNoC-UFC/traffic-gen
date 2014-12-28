@@ -9,6 +9,7 @@
 package uniforme;
 import java.awt.*;
 import java.io.*;
+
 import javax.swing.*;
 
 
@@ -261,13 +262,15 @@ public class DistSpatial_THOR{
 	}
 
 	private String formatAddress(int addX,int addY){
-		String targetXBin,targetYBin,targetBin,zeros,targetHex;
-		//Gerando destino na horizontal
-		targetXBin=conversao.decimal_binario(addX,(flitWidth/4));
-		//Gerando destino na vertical
-		targetYBin=conversao.decimal_binario(addY,(flitWidth/4));
-		targetBin=targetXBin+targetYBin; //concatena targetX e targetY;
-		targetHex = conversao.binario_hexa(targetBin,(flitWidth/8));
+		String targetXBin, targetYBin, targetBin, zeros, targetHex;
+		// Gerando destino na horizontal
+		targetXBin = conversao.decimal_binario(addX, (flitWidth / 2));
+		// Gerando destino na vertical
+		targetYBin = conversao.decimal_binario(addY, (flitWidth / 2));
+		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
+		// zeros = conversao.decimal_hexa(0, (flitWidth / 8));
+		targetHex = conversao.binario_hexa(targetBin, (flitWidth / 4));
+		// targetHex = zeros + targetHex;
 		return targetHex;
 	}
 
