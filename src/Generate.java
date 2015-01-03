@@ -277,8 +277,8 @@ public class Generate {
 		try {
 			Formatter output = new Formatter(path + "nPcksMatrix");
 
-			for (int x = 0; x < (dimX * dimY - 1); x++) {
-				for (int y = 0; y < (dimY * dimX - 1); y++) {
+			for (int x = 0; x < (dimX * dimY); x++) {
+				for (int y = 0; y < (dimY * dimX); y++) {
 					output.format("%d \t", nPcks[x][y]);
 				}
 				output.format("\r\n");
