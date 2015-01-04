@@ -7,11 +7,11 @@ public class TrafficGen {
 	public static void main(String[] args) {
 
 		String caminho = ".";
-		int dimX = 4; // X dimension
-		int dimY = 4; // Y dimension
+		int dimX = 8; // X dimension
+		int dimY = 8; // Y dimension
 		int n_pck = 10; // packets per core
-		int nFlits = 20; // #flits
-		int flitWidth = 16;
+		int nFlits = 135; // #flits
+		int flitWidth = 4;
 		double freq = 50.0;
 		int flitClockCycles = 1; // on-off
 		ArrayList<Double> rates = new ArrayList<Double>();
@@ -38,8 +38,31 @@ public class TrafficGen {
 		// String distrib = "complemento";
 		// String distrib = "matrixTranspose";
 		// String distrib = "perfectShuffle";
+		if(nFlits < 13) {
+			System.err.println("Pacote muito pequeno. Assumindo 13 flits...");
+			nFlits = 13;
+		}
+		if(Math.pow(2, flitWidth) < nFlits-2) {
+			flitWidth = (int) Math.ceil(Math.log(nFlits-2)/Math.log(2)) + 1;
+			if(flitWidth%4 != 0) 
+				flitWidth = (flitWidth/4+1)*4;
+			System.err.println("Flit pequeno para pacotes de "+nFlits+ " flits. Assumindo "+flitWidth+" bits.");
+		}
+		if(Math.pow(2, flitWidth/2) < dimX || Math.pow(2, flitWidth/2) < dimY) {
+			int dim = (dimX > dimY) ? dimX : dimY;
+			flitWidth = (int) (2.0*Math.ceil(Math.log(dim)/Math.log(2)));
+			if(flitWidth%4 != 0) 
+				flitWidth = (flitWidth/4+1)*4;
+			System.err.println("Flit pequeno para rede "+dimX+"x"+dimY+ ". Assumindo "+flitWidth+" bits.");
+		}
+		if(Math.pow(2, 2*flitWidth) < n_pck*dimX*dimY) {
+			flitWidth = (int) (Math.ceil(Math.log(n_pck*dimX*dimY)/Math.log(2))/2.0) + 1;
+			if(flitWidth%4 != 0) 
+				flitWidth = (flitWidth/4+1)*4;
+			System.err.println("Flit pequeno para "+n_pck+" pacotes. Assumindo "+flitWidth+" bits.");
+		}
 
-		Generate gen = new Generate(dimX, dimY, flitWidth, flitClockCycles,flitWidth, n_pck, nFlits, freq);
+		Generate gen = new Generate(dimX, dimY, flitWidth, flitClockCycles, n_pck, nFlits, freq);
 
 		genSinks genS = new genSinks(dimX, dimY, flitWidth);
 

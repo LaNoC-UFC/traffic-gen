@@ -10,7 +10,7 @@ public class Generate {
 	private int[][] nPcks;
 
 	private double frequency;
-	private int packetSize, numberPackets, FlitSize;
+	private int packetSize, numberPackets;
 	private int dimX, dimY, flitWidth, flitClockCycles;
 	private Integer[] nPackets;
 	private Integer[] nFlits;
@@ -24,7 +24,7 @@ public class Generate {
 	private int sequenceNumberH = 0, sequenceNumberL = 1;
 
 	public Generate(int dimX, int dimY, int flitWidth,
-			int flitClockCycles, int FlitSize, int numberPackets,
+			int flitClockCycles, int numberPackets,
 			int packetSize, double frequency) {
 
 		nPcks = new int[dimX * dimY][dimX * dimY];
@@ -33,7 +33,6 @@ public class Generate {
 		this.dimY = dimY;
 		this.flitWidth = flitWidth;
 		this.flitClockCycles = flitClockCycles;
-		this.FlitSize = FlitSize;
 		nPackets = new Integer[dimX * dimY];
 
 		for (int i = 0; i < dimX * dimY; i++)
@@ -127,7 +126,7 @@ public class Generate {
 				String HashKey = sourceX + "." + sourceY + " " + target;
 				int sourceN = sourceX + sourceY * dimX;
 				int sinkN;// = Character.getNumericValue(target.charAt(0)) + Character.getNumericValue(target.charAt(1)) * dimX;
-				sinkN = Conversao.nodoToInteger(target, dimX, FlitSize);
+				sinkN = Conversao.nodoToInteger(target, dimX, flitWidth);
 
 				nPcks[sourceN][sinkN]++;
 
@@ -143,7 +142,7 @@ public class Generate {
 				linha = linha.concat(/* priority + */target + " ");
 				/***************************************************************************************/
 				/*
-				 * 2� FLIT = SIZE /********************************************
+				 * 2o FLIT = SIZE /********************************************
 				 * ******************************************
 				 */
 
@@ -160,7 +159,7 @@ public class Generate {
 
 				/***************************************************************************************/
 				/*
-				 * 3� FLIT = SOURCE /******************************************
+				 * 3o FLIT = SOURCE /******************************************
 				 * ********************************************
 				 */
 
@@ -168,7 +167,7 @@ public class Generate {
 
 				/***************************************************************************************/
 				/*
-				 * 4� - 7� FLITS = TIMESTAMP HEXA /**************************
+				 * 4o - 7o FLITS = TIMESTAMP HEXA /**************************
 				 * ************************************************************
 				 */
 				timestampHex = getTimestamp((String) vet.get(j));
@@ -177,7 +176,7 @@ public class Generate {
 
 				/***************************************************************************************/
 				/*
-				 * 8� AND 9� FLIT = SEQUENCE NUMBER /************************
+				 * 8o AND 9o FLIT = SEQUENCE NUMBER /************************
 				 * *************************************
 				 * *************************
 				 */
@@ -191,7 +190,7 @@ public class Generate {
 								" "));
 
 				// incrementando o numero de sequencia
-				if (sequenceNumberL == (Math.pow(2, flitWidth) - 1)) {
+				if (sequenceNumberL >= Math.pow(2, flitWidth)-1) {
 					sequenceNumberH++;
 					sequenceNumberL = 0;
 				} else
@@ -206,8 +205,8 @@ public class Generate {
 					counter = 8;
 					for (int l = counter; l <= payloadSize; l++) {
 
-						if (l == payloadSize) // n�o coloca espa�o se � o
-												// �ltimo flit do payload
+						if (l == payloadSize) // nao coloca espaco se eh o
+												// ultimo flit do payload
 							payload = payload.concat(addLineByte(Integer
 									.toHexString(0).toUpperCase(), ""));
 						else
@@ -236,7 +235,7 @@ public class Generate {
 			int sizeEsperado = flitWidth / 4;
 			int sizeData = data.length();
 			if (sizeData > sizeEsperado)
-				System.out.println("Problema no tamanhos dos flits");
+				System.err.println("Problema no tamanho do flit "+data);
 			else if (sizeData < sizeEsperado) {
 				for (int i = 0; i < (sizeEsperado - sizeData); i++)
 					data = "0" + data;
@@ -248,7 +247,7 @@ public class Generate {
 
 	private String[] getTimestamp(double value) {
 		String[] timestampHex = new String[4];
-		for (int i = 0; i < 4; i++) { // 4 � o n�mero de flits
+		for (int i = 0; i < 4; i++) { // 4 eh o numero de flits
 										// correspondente ao timestampHex
 			timestampHex[i] = "";
 			for (int l = 0; l < (flitWidth / 4); l++) {
