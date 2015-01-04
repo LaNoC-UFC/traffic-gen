@@ -85,10 +85,10 @@ public class Generate {
 	public void writeLinesPS(ArrayList<String> sinks, int x,
 			int y, int numberPackets, double Rate) {
 
-		String linha, payload = "";
+		String linha;
 
 		int sourceX, sourceY, iTarget;
-		int counter, payloadSize = 0;
+		int payloadSize = 0;
 		String[] timestampHex;
 
 		DistTime distTime = new DistTime(flitWidth, flitClockCycles, frequency,
@@ -187,7 +187,7 @@ public class Generate {
 				linha = linha
 						.concat(addLineByte(Integer
 								.toHexString(sequenceNumberL).toUpperCase(),
-								" "));
+								""));
 
 				// incrementando o numero de sequencia
 				if (sequenceNumberL >= Math.pow(2, flitWidth)-1) {
@@ -201,6 +201,7 @@ public class Generate {
 				 * /*****************************************************
 				 * *********************************
 				 */
+				/*
 				if (j == 0) {
 					counter = 8;
 					for (int l = counter; l <= payloadSize; l++) {
@@ -222,7 +223,7 @@ public class Generate {
 
 				}
 				linha = linha.concat(payload);
-
+				*/
 				dataOutput.writeBytes(linha + "\r\n");
 			}
 		} catch (Exception e) {

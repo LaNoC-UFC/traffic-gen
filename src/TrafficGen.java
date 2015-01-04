@@ -10,8 +10,8 @@ public class TrafficGen {
 		int dimX = 8; // X dimension
 		int dimY = 8; // Y dimension
 		int n_pck = 10; // packets per core
-		int nFlits = 135; // #flits
-		int flitWidth = 4;
+		int nFlits = 19; // #flits
+		int flitWidth = 16;
 		double freq = 50.0;
 		int flitClockCycles = 1; // on-off
 		ArrayList<Double> rates = new ArrayList<Double>();
