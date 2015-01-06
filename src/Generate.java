@@ -68,7 +68,8 @@ public class Generate {
 					dataOutput = new DataOutputStream(file);
 
 					// Format and print packets
-					writeLinesPS(sinks, x, y, numberPackets, rate);
+					writeLinesPS(sinks, x, y, numberPackets, rate,0.1);
+					
 
 					dataOutput.close();
 
@@ -83,22 +84,26 @@ public class Generate {
 	}
 
 	public void writeLinesPS(ArrayList<String> sinks, int x,
-			int y, int numberPackets, double Rate) {
+			int y, int numberPackets, double Rate, double wmupcooldwPercent) {
 
 		String linha;
 
 		int sourceX, sourceY, iTarget;
 		int payloadSize = 0;
+		int warmupPcks =(int)(numberPackets*wmupcooldwPercent);
+		System.out.println("warm up packs: "+warmupPcks);
+		int totalNPcks = numberPackets+2*warmupPcks;
+		System.out.println("Total Packest: "+totalNPcks);
 		String[] timestampHex;
 
 		DistTime distTime = new DistTime(flitWidth, flitClockCycles, frequency,
-				packetSize, numberPackets, Rate);
+				packetSize, totalNPcks, Rate);
 
 		ArrayList<String> vet = distTime.uniform();
 
 		try {
 
-			for (int j = 0; j < numberPackets; j++) {
+			for (int j = 0; j < totalNPcks; j++) {
 				linha = "";
 				/***************************************************************************************/
 				/*
@@ -152,7 +157,8 @@ public class Generate {
 				linha = linha.concat(addLineByte(
 						Integer.toHexString(payloadSize).toUpperCase(), " "));
 
-				nPackets[iTarget]++;
+				if(!(j<warmupPcks-1 && j>(totalNPcks-warmupPcks)))
+					nPackets[iTarget]++;
 
 				nFlits[iTarget] += packetSize;
 				totalFlits += packetSize;
@@ -180,21 +186,23 @@ public class Generate {
 				 * *************************************
 				 * *************************
 				 */
-				linha = linha
-						.concat(addLineByte(Integer
-								.toHexString(sequenceNumberH).toUpperCase(),
-								" "));
-				linha = linha
-						.concat(addLineByte(Integer
-								.toHexString(sequenceNumberL).toUpperCase(),
-								""));
+				if(!(j<warmupPcks-1 && j>totalNPcks-warmupPcks))
+				{
+					linha = linha.concat(addLineByte(Integer.toHexString(sequenceNumberH).toUpperCase()," "));
+					linha = linha.concat(addLineByte(Integer.toHexString(sequenceNumberL).toUpperCase(),""));
 
 				// incrementando o numero de sequencia
-				if (sequenceNumberL >= Math.pow(2, flitWidth)-1) {
-					sequenceNumberH++;
-					sequenceNumberL = 0;
-				} else
-					sequenceNumberL++;
+					if (sequenceNumberL >= Math.pow(2, flitWidth)-1) {
+						sequenceNumberH++;
+						sequenceNumberL = 0;
+					} else
+						sequenceNumberL++;
+				}
+				else
+				{
+					linha = linha.concat(addLineByte(""," "));
+					linha = linha.concat(addLineByte("",""));
+				}
 				/***************************************************************************************/
 				/*
 				 * PAYLOAD
@@ -226,7 +234,7 @@ public class Generate {
 				*/
 				dataOutput.writeBytes(linha + "\r\n");
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			System.out.println("Exception at WriteLinePS");
 		}
 	}
