@@ -9,6 +9,7 @@ public class Generate {
 	private Map<String, Integer> numberOfPacks = new HashMap<String, Integer>();
 	private int[][] nPcks;
 
+	private int warmupPcks;
 	private double frequency;
 	private int packetSize, numberPackets;
 	private int dimX, dimY, flitWidth, flitClockCycles;
@@ -24,11 +25,12 @@ public class Generate {
 	private int sequenceNumberH = 0, sequenceNumberL = 1;
 
 	public Generate(int dimX, int dimY, int flitWidth,
-			int flitClockCycles, int numberPackets,
+			int flitClockCycles, int numberPackets, int warmupPcks,
 			int packetSize, double frequency) {
 
 		nPcks = new int[dimX * dimY][dimX * dimY];
 
+		this.warmupPcks= warmupPcks;
 		this.dimX = dimX;
 		this.dimY = dimY;
 		this.flitWidth = flitWidth;
@@ -68,7 +70,7 @@ public class Generate {
 					dataOutput = new DataOutputStream(file);
 
 					// Format and print packets
-					writeLinesPS(sinks, x, y, numberPackets, rate,0.1);
+					writeLinesPS(sinks, x, y, numberPackets, rate, warmupPcks);
 					
 
 					dataOutput.close();
@@ -84,16 +86,15 @@ public class Generate {
 	}
 
 	public void writeLinesPS(ArrayList<String> sinks, int x,
-			int y, int numberPackets, double Rate, double wmupcooldwPercent) {
+			int y, int numberPackets, double Rate, int warmUpPcks) {
 
 		String linha;
 
 		int sourceX, sourceY, iTarget;
 		int payloadSize = 0;
-		int warmupPcks =(int)(numberPackets*wmupcooldwPercent);
-		System.out.println("warm up packs: "+warmupPcks);
+
+		//System.out.println("warm up packs: "+warmupPcks);
 		int totalNPcks = numberPackets+2*warmupPcks;
-		System.out.println("Total Packest: "+totalNPcks);
 		String[] timestampHex;
 
 		DistTime distTime = new DistTime(flitWidth, flitClockCycles, frequency,
@@ -112,6 +113,7 @@ public class Generate {
 				 * *******************************************
 				 */
 				linha = linha.concat((String) vet.get(j) + " ");
+				
 
 				/***************************************************************************************/
 				/*
@@ -124,21 +126,23 @@ public class Generate {
 
 				sourceX = x;
 				sourceY = y;
-
-				String target = sinks.get((x * numberPackets) + (y * numberPackets * dimX) + j);
-
+				String target = sinks.get((x * totalNPcks) + (y * totalNPcks * dimX) + j);
 				// Get the number of pcks per flux
 				String HashKey = sourceX + "." + sourceY + " " + target;
 				int sourceN = sourceX + sourceY * dimX;
 				int sinkN;// = Character.getNumericValue(target.charAt(0)) + Character.getNumericValue(target.charAt(1)) * dimX;
 				sinkN = Conversao.nodoToInteger(target, dimX, flitWidth);
 
-				nPcks[sourceN][sinkN]++;
+				if(!(j<warmupPcks-1 || j>(totalNPcks-warmupPcks)))
+					nPcks[sourceN][sinkN]++;
 
-				if (!numberOfPacks.containsKey(HashKey)) {
-					numberOfPacks.put(HashKey, 1);
-				} else {
-					numberOfPacks.put(HashKey, numberOfPacks.get(HashKey) + 1);
+				if(!(j<warmupPcks-1 || j>(totalNPcks-warmupPcks)))
+				{
+					if (!numberOfPacks.containsKey(HashKey)) {
+						numberOfPacks.put(HashKey, 1);
+					} else {
+						numberOfPacks.put(HashKey, numberOfPacks.get(HashKey) + 1);
+					}
 				}
 
 				//iTarget = Conversao.nodoToInteger(target,dimX, FlitSize);
@@ -156,8 +160,9 @@ public class Generate {
 												// pelo fli
 				linha = linha.concat(addLineByte(
 						Integer.toHexString(payloadSize).toUpperCase(), " "));
+				
 
-				if(!(j<warmupPcks-1 && j>(totalNPcks-warmupPcks)))
+				
 					nPackets[iTarget]++;
 
 				nFlits[iTarget] += packetSize;
@@ -170,6 +175,7 @@ public class Generate {
 				 */
 
 				linha = linha.concat(Conversao.formatAddress(x, y, flitWidth) + " ");
+				
 
 				/***************************************************************************************/
 				/*
@@ -179,6 +185,7 @@ public class Generate {
 				timestampHex = getTimestamp((String) vet.get(j));
 				linha = linha.concat(timestampHex[3] + " " + timestampHex[2]
 						+ " " + timestampHex[1] + " " + timestampHex[0] + " ");
+				
 
 				/***************************************************************************************/
 				/*
@@ -186,12 +193,12 @@ public class Generate {
 				 * *************************************
 				 * *************************
 				 */
-				if(!(j<warmupPcks-1 && j>totalNPcks-warmupPcks))
+				if(!(j<warmupPcks || j>=totalNPcks-warmupPcks))
 				{
 					linha = linha.concat(addLineByte(Integer.toHexString(sequenceNumberH).toUpperCase()," "));
 					linha = linha.concat(addLineByte(Integer.toHexString(sequenceNumberL).toUpperCase(),""));
 
-				// incrementando o numero de sequencia
+				 //incrementando o numero de sequencia
 					if (sequenceNumberL >= Math.pow(2, flitWidth)-1) {
 						sequenceNumberH++;
 						sequenceNumberL = 0;
@@ -203,6 +210,7 @@ public class Generate {
 					linha = linha.concat(addLineByte(""," "));
 					linha = linha.concat(addLineByte("",""));
 				}
+				
 				/***************************************************************************************/
 				/*
 				 * PAYLOAD

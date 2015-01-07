@@ -9,7 +9,8 @@ public class TrafficGen {
 		String caminho = ".";
 		int dimX = 8; // X dimension
 		int dimY = 8; // Y dimension
-		int n_pck = 10; // packets per core
+		int n_pck = 100; // packets per core
+		double percentToWarmUp=0.1;
 		int nFlits = 19; // #flits
 		int flitWidth = 16;
 		double freq = 50.0;
@@ -23,6 +24,7 @@ public class TrafficGen {
 			n_pck = Integer.parseInt(args[2]); // # packets per core
 			nFlits = Integer.parseInt(args[3]); // # flits
 			flitWidth = Integer.parseInt(args[4]); // flit size
+			percentToWarmUp=0.1;
 			String[] inputRates = args[5].split(",");
 
 			for (String rate : inputRates)
@@ -31,6 +33,8 @@ public class TrafficGen {
 			rates.add(50.0);
 		}
 
+		int warmupPcks =(int)Math.ceil(n_pck*percentToWarmUp);
+		int totalPcks = n_pck+2*warmupPcks;
 		int desX = dimX/2, desY = dimY/2; // for hot spot
 		 String distrib = "random"; // uniform -> random ; else -> hot spot
 		// String distrib = "bitReversal";
@@ -62,12 +66,12 @@ public class TrafficGen {
 			System.err.println("Flit pequeno para "+n_pck+" pacotes. Assumindo "+flitWidth+" bits.");
 		}
 
-		Generate gen = new Generate(dimX, dimY, flitWidth, flitClockCycles, n_pck, nFlits, freq);
+		Generate gen = new Generate(dimX, dimY, flitWidth, flitClockCycles, n_pck, warmupPcks, nFlits, freq);
 
 		genSinks genS = new genSinks(dimX, dimY, flitWidth);
 
 		for (Double rate : rates) {
-			ArrayList<String> sinks = genS.doSinks(distrib, n_pck, desX, desY);
+			ArrayList<String> sinks = genS.doSinks(distrib, totalPcks, desX, desY);
 			gen.writeTraffic(sinks, distrib, caminho + File.separator + "F"
 					+ (rate.intValue()), rate);
 			gen.printNofPcks(caminho + File.separator + "F"
