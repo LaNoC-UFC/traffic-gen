@@ -7,11 +7,11 @@ public class TrafficGen {
 	public static void main(String[] args) {
 
 		String caminho = ".";
-		int dimX = 8; // X dimension
-		int dimY = 8; // Y dimension
+		int dimX = 11; // X dimension
+		int dimY = 11; // Y dimension
 		int n_pck = 100; // packets per core
-		double percentToWarmUp=0.1;
-		int nFlits = 19; // #flits
+		double percentToWarmUp = 0.1;
+		int nFlits = 15; // #flits
 		int flitWidth = 16;
 		double freq = 50.0;
 		int flitClockCycles = 1; // on-off
@@ -30,10 +30,24 @@ public class TrafficGen {
 			for (String rate : inputRates)
 				rates.add(Double.parseDouble(rate));
 		} else {
-			rates.add(50.0);
+			rates.add(1.0);
+			rates.add(2.0);
+			rates.add(3.0);
+			rates.add(4.0);
+			rates.add(5.0);
+			rates.add(6.0);
+			rates.add(7.0);
+			rates.add(8.0);
+			rates.add(9.0);
+			rates.add(10.0);
+			rates.add(11.0);
+			rates.add(12.0);
+			rates.add(13.0);
+			rates.add(14.0);
+			rates.add(15.0);
 		}
 
-		int warmupPcks =(int)Math.ceil(n_pck*percentToWarmUp);
+		int warmupPcks =(int)Math.ceil((double)n_pck*percentToWarmUp);
 		int totalPcks = n_pck+2*warmupPcks;
 		int desX = dimX/2, desY = dimY/2; // for hot spot
 		 String distrib = "random"; // uniform -> random ; else -> hot spot
@@ -71,11 +85,11 @@ public class TrafficGen {
 		genSinks genS = new genSinks(dimX, dimY, flitWidth);
 
 		for (Double rate : rates) {
+			System.out.println("Generating the "+rate+"% rate.");
+			String path = caminho + File.separator + "F" + String.format("%03d", rate.intValue());
 			ArrayList<String> sinks = genS.doSinks(distrib, totalPcks, desX, desY);
-			gen.writeTraffic(sinks, distrib, caminho + File.separator + "F"
-					+ (rate.intValue()), rate);
-			gen.printNofPcks(caminho + File.separator + "F"
-					+ (rate.intValue()) + File.separator);
+			gen.writeTraffic(sinks, distrib, path, rate);
+			gen.printNofPcks(path + File.separator);
 		}
 
 		System.out.println("Done, check selected directory");
