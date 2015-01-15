@@ -35,8 +35,7 @@ public class DistSpatial {
 	/**
 	 * Define o nodo destino do nodo origem informado por par�metro a partir da
 	 */
-	public String defineTarget(String target, int sourceX, int sourceY,
-			int targetX, int targetY) {
+	public String defineTarget(String target, int sourceX, int sourceY) {
 		String t;
 		if (target.equalsIgnoreCase("random"))
 			t = random(sourceX, sourceY);
@@ -50,8 +49,12 @@ public class DistSpatial {
 			t = matrixTranspose(sourceX, sourceY);
 		else if (target.equalsIgnoreCase("perfectShuffle"))
 			t = perfectShuffle(sourceX, sourceY);
-		else // hot-spot
+		else 
+		{	//target have the destination of hotspot
+			int targetX = Integer.parseInt(target.split("\\.")[0]); 
+			int targetY = Integer.parseInt(target.split("\\.")[1]); 
 			t = Conversao.formatAddress(targetX, targetY, flitWidth);
+		}
 
 		return t;
 	}

@@ -7,8 +7,8 @@ public class TrafficGen {
 	public static void main(String[] args) {
 
 		String caminho = ".";
-		int dimX = 11; // X dimension
-		int dimY = 11; // Y dimension
+		int dimX = 8; // X dimension
+		int dimY = 8; // Y dimension
 		int n_pck = 100; // packets per core
 		double percentToWarmUp = 0.1;
 		int nFlits = 15; // #flits
@@ -50,9 +50,10 @@ public class TrafficGen {
 		int warmupPcks =(int)Math.ceil((double)n_pck*percentToWarmUp);
 		int totalPcks = n_pck+2*warmupPcks;
 		int desX = dimX/2, desY = dimY/2; // for hot spot
-		 String distrib = "random"; // uniform -> random ; else -> hot spot
+		 //String distrib = "random";
+		 //String distrib = "1.0"; //Hotspot 
 		// String distrib = "bitReversal";
-		// String distrib = "butterfly";
+		String distrib = "butterfly";
 		// String distrib = "complemento";
 		// String distrib = "matrixTranspose";
 		// String distrib = "perfectShuffle";
@@ -87,7 +88,7 @@ public class TrafficGen {
 		for (Double rate : rates) {
 			System.out.println("Generating the "+rate+"% rate.");
 			String path = caminho + File.separator + "F" + String.format("%03d", rate.intValue());
-			ArrayList<String> sinks = genS.doSinks(distrib, totalPcks, desX, desY);
+			ArrayList<String> sinks = genS.doSinks(distrib, totalPcks);
 			gen.writeTraffic(sinks, distrib, path, rate);
 			gen.printNofPcks(path + File.separator);
 		}
