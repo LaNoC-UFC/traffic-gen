@@ -291,7 +291,7 @@ public class Generate {
 	// Print sourceXsourceY sinkXsinkY nOfPcks
 	public void printNofPcks(String path) {
 		try {
-			Formatter output = new Formatter(path + "nPcksMatrix");
+			Formatter output = new Formatter(path);
 
 			for (int x = 0; x < (dimX * dimY); x++) {
 				for (int y = 0; y < (dimY * dimX); y++) {
@@ -299,14 +299,16 @@ public class Generate {
 				}
 				output.format("\r\n");
 			}
+			output.close();
 
+			/*
 			FileWriter fw = new FileWriter(new File(path + "nPcksHash"));
 			for (String key : numberOfPacks.keySet()) {
 				fw.write(key + " " + numberOfPacks.get(key) + "\n");
 			}
-
 			fw.close();
-			output.close();
+			*/
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

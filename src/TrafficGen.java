@@ -30,21 +30,8 @@ public class TrafficGen {
 			for (String rate : inputRates)
 				rates.add(Double.parseDouble(rate));
 		} else {
-			rates.add(1.0);
-			rates.add(2.0);
-			rates.add(3.0);
-			rates.add(4.0);
-			rates.add(5.0);
-			rates.add(6.0);
-			rates.add(7.0);
-			rates.add(8.0);
-			rates.add(9.0);
-			rates.add(10.0);
-			rates.add(11.0);
-			rates.add(12.0);
-			rates.add(13.0);
-			rates.add(14.0);
-			rates.add(15.0);
+			for(int i = 1; i < 21; i++)
+				rates.add((double)i);
 		}
 
 		int warmupPcks =(int)Math.ceil((double)n_pck*percentToWarmUp);
@@ -86,11 +73,11 @@ public class TrafficGen {
 
 		for (Double rate : rates) {
 			System.out.println("Generating the "+rate+"% rate.");
-			String path = caminho + File.separator + "F" + String.format("%03d", rate.intValue());
 			ArrayList<String> sinks = genS.doSinks(distrib, totalPcks, desX, desY);
+			String path = caminho + File.separator + "F" + String.format("%03d", rate.intValue());
 			gen.writeTraffic(sinks, distrib, path, rate);
-			gen.printNofPcks(path + File.separator);
 		}
+		gen.printNofPcks(caminho + File.separator + "output.txt");
 
 		System.out.println("Done, check selected directory");
 
