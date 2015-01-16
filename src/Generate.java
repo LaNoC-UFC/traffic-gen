@@ -77,8 +77,8 @@ public class Generate {
 
 				}
 
-				catch (Exception e) {
-					System.out.println("Erro");
+				catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -127,16 +127,20 @@ public class Generate {
 				sourceX = x;
 				sourceY = y;
 				String target = sinks.get((x * totalNPcks) + (y * totalNPcks * dimX) + j);
+				
+				if(target.equals(Conversao.formatAddress(x, y, flitWidth)))				
+					break;
+					
 				// Get the number of pcks per flux
 				String HashKey = sourceX + "." + sourceY + " " + target;
 				int sourceN = sourceX + sourceY * dimX;
 				int sinkN;// = Character.getNumericValue(target.charAt(0)) + Character.getNumericValue(target.charAt(1)) * dimX;
 				sinkN = Conversao.nodoToInteger(target, dimX, flitWidth);
 
-				if(!(j<warmupPcks-1 || j>(totalNPcks-warmupPcks)))
+				if(!(j<warmupPcks || j>=(totalNPcks-warmupPcks)))
 					nPcks[sourceN][sinkN]++;
 
-				if(!(j<warmupPcks-1 || j>(totalNPcks-warmupPcks)))
+				if(!(j<warmupPcks || j>=(totalNPcks-warmupPcks)))
 				{
 					if (!numberOfPacks.containsKey(HashKey)) {
 						numberOfPacks.put(HashKey, 1);
