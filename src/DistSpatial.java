@@ -53,7 +53,7 @@ public class DistSpatial {
 		{	//target have the destination of hotspot
 			int targetX = Integer.parseInt(target.split("\\.")[0]); 
 			int targetY = Integer.parseInt(target.split("\\.")[1]); 
-			t = Conversao.formatAddress(targetX, targetY, flitWidth);
+			t = Conversion.formatAddress(targetX, targetY, flitWidth);
 		}
 
 		return t;
@@ -70,7 +70,7 @@ public class DistSpatial {
 			// Gerando destino na vertical
 			targetY = (int) (Math.random() * dimY);
 		} while (addX == targetX && addY == targetY);
-		return Conversao.formatAddress(targetX, targetY, flitWidth);
+		return Conversion.formatAddress(targetX, targetY, flitWidth);
 	}
 
 
@@ -83,8 +83,8 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversao.decimal_binario(addX, (tam / 2));
-		targetYBin = Conversao.decimal_binario(addY, (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 		for (int i = 0; i < tam; i++) { // inverte os bits
@@ -97,9 +97,9 @@ public class DistSpatial {
 		// System.out.println(" Bit reversal targetBin="+targetBin);
 		targetXBin = targetBin.substring(0, tam / 2);
 		targetYBin = targetBin.substring(tam / 2);
-		targetX = Conversao.binario_decimal(targetXBin);
-		targetY = Conversao.binario_decimal(targetYBin);
-		return Conversao.formatAddress(targetX, targetY, flitWidth);
+		targetX = Integer.parseInt(targetXBin, 2);
+		targetY = Integer.parseInt(targetYBin, 2);
+		return Conversion.formatAddress(targetX, targetY, flitWidth);
 	}
 
 	/**
@@ -111,8 +111,8 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversao.decimal_binario(addX, (tam / 2));
-		targetYBin = Conversao.decimal_binario(addY, (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 
@@ -128,9 +128,9 @@ public class DistSpatial {
 		// System.out.println(" Butterfly targetBin="+targetBin);
 		targetXBin = targetBin.substring(0, tam / 2);
 		targetYBin = targetBin.substring(tam / 2);
-		targetX = Conversao.binario_decimal(targetXBin);
-		targetY = Conversao.binario_decimal(targetYBin);
-		return Conversao.formatAddress(targetX, targetY, flitWidth);
+		targetX = Integer.parseInt(targetXBin, 2);
+		targetY = Integer.parseInt(targetYBin, 2);
+		return Conversion.formatAddress(targetX, targetY, flitWidth);
 	}
 
 	/**
@@ -141,8 +141,8 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversao.decimal_binario(addX, (tam / 2));
-		targetYBin = Conversao.decimal_binario(addY, (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 
@@ -157,9 +157,9 @@ public class DistSpatial {
 		// System.out.println(" Complemento targetBin= "+targetBin);
 		targetXBin = targetBin.substring(0, tam / 2);
 		targetYBin = targetBin.substring(tam / 2);
-		targetX = Conversao.binario_decimal(targetXBin);
-		targetY = Conversao.binario_decimal(targetYBin);
-		return Conversao.formatAddress(targetX, targetY, flitWidth);
+		targetX = Integer.parseInt(targetXBin, 2);
+		targetY = Integer.parseInt(targetYBin, 2);
+		return Conversion.formatAddress(targetX, targetY, flitWidth);
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class DistSpatial {
 	 * para 1011.
 	 */
 	private String matrixTranspose(int addX, int addY) {
-		return Conversao.formatAddress(addY, addX, flitWidth);
+		return Conversion.formatAddress(addY, addX, flitWidth);
 	}
 
 	/**
@@ -180,8 +180,8 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversao.decimal_binario(addX, (tam / 2));
-		targetYBin = Conversao.decimal_binario(addY, (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 
@@ -203,9 +203,9 @@ public class DistSpatial {
 		// System.out.println(" Complemento targetBin="+targetBin);
 		targetXBin = targetBin.substring(0, tam / 2);
 		targetYBin = targetBin.substring(tam / 2);
-		targetX = Conversao.binario_decimal(targetXBin);
-		targetY = Conversao.binario_decimal(targetYBin);
-		return Conversao.formatAddress(targetX, targetY, flitWidth);
+		targetX = Integer.parseInt(targetXBin, 2);
+		targetY = Integer.parseInt(targetYBin, 2);
+		return Conversion.formatAddress(targetX, targetY, flitWidth);
 	}
 
 }
