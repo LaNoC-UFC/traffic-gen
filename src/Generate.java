@@ -65,7 +65,7 @@ public class Generate {
 					// Create files for all routers
 					file = new FileOutputStream(scenarioPath + File.separator
 							+ "In" + File.separator + "in"
-							+ Conversao.formatAddress(x, y, flitWidth) + ".txt");
+							+ Conversion.formatAddress(x, y, flitWidth) + ".txt");
 
 					dataOutput = new DataOutputStream(file);
 
@@ -121,21 +121,20 @@ public class Generate {
 				 * *******************************************
 				 * *************************
 				 */
-				// priority = Conversao.decimal_hexa(priorityO, (flitWidth /
+				// priority = Conversion.decimal_hexa(priorityO, (flitWidth /
 				// 8));
 
 				sourceX = x;
 				sourceY = y;
 				String target = sinks.get((x * totalNPcks) + (y * totalNPcks * dimX) + j);
 				
-				if(target.equals(Conversao.formatAddress(x, y, flitWidth)))				
+				if(target.equals(Conversion.formatAddress(x, y, flitWidth)))
 					break;
 					
 				// Get the number of pcks per flux
 				String HashKey = sourceX + "." + sourceY + " " + target;
 				int sourceN = sourceX + sourceY * dimX;
-				int sinkN;// = Character.getNumericValue(target.charAt(0)) + Character.getNumericValue(target.charAt(1)) * dimX;
-				sinkN = Conversao.nodoToInteger(target, dimX, flitWidth);
+				int sinkN = vertexIndex(target, dimX, flitWidth);
 
 				if(!(j<warmupPcks || j>=(totalNPcks-warmupPcks)))
 					nPcks[sourceN][sinkN]++;
@@ -149,7 +148,7 @@ public class Generate {
 					}
 				}
 
-				//iTarget = Conversao.nodoToInteger(target,dimX, FlitSize);
+				//iTarget = Conversion.vertexIndex(target,dimX, FlitSize);
 				iTarget = sinkN;
 
 				linha = linha.concat(/* priority + */target + " ");
@@ -178,7 +177,7 @@ public class Generate {
 				 * ********************************************
 				 */
 
-				linha = linha.concat(Conversao.formatAddress(x, y, flitWidth) + " ");
+				linha = linha.concat(Conversion.formatAddress(x, y, flitWidth) + " ");
 				
 
 				/***************************************************************************************/
@@ -251,6 +250,24 @@ public class Generate {
 		}
 	}
 
+	private static int vertexIndex(String vertex, int nRotX, int flitSize) {
+		int x = vertexAxisX(vertex, flitSize);
+		int y = vertexAxisY(vertex, flitSize);
+		return (y * nRotX + x);
+	}
+
+	private static int vertexAxisX(String vertex, int flitSize) {
+		int nodeX = Integer.parseInt(vertex.substring(0, vertex.length() / 2), 16);
+		String nX = Conversion.zeroLeftPad(Integer.toBinaryString(nodeX), flitSize / 2);
+		return Integer.parseInt(nX,2);
+	}
+
+	private static int vertexAxisY(String vertex, int flitSize) {
+		int nodeY = Integer.parseInt(vertex.substring(vertex.length() / 2), 16);
+		String nY = Conversion.zeroLeftPad(Integer.toBinaryString(nodeY), flitSize / 2);
+		return Integer.parseInt(nY,2);
+	}
+
 	private String addLineByte(String data, String separador) {
 		if (data != null) {
 			int sizeEsperado = flitWidth / 4;
@@ -272,7 +289,7 @@ public class Generate {
 										// correspondente ao timestampHex
 			timestampHex[i] = "";
 			for (int l = 0; l < (flitWidth / 4); l++) {
-				timestampHex[i] = Conversao.decimal_hexa(((int) value % 16), 1)
+				timestampHex[i] = Conversion.zeroLeftPad(Integer.toHexString((int) value % 16), 1)
 						+ timestampHex[i];
 				value = value / 16;
 			}
@@ -283,7 +300,7 @@ public class Generate {
 	private String[] getTimestamp(String value) {
 		String[] timestampHex = new String[4];
 
-		value = Conversao.setLengthHexa(value, flitWidth);
+		value = Conversion.zeroLeftPad(value, flitWidth);
 		// System.out.println("value "+value);
 		for (int i = 0, j = flitWidth; i < 4; i++, j = j - (flitWidth / 4)) {
 			timestampHex[i] = value.substring(j - (flitWidth / 4), j);
