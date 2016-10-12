@@ -97,10 +97,10 @@ public class Generate {
 		int totalNPcks = numberPackets+2*warmupPcks;
 		String[] timestampHex;
 
-		DistTime distTime = new DistTime(flitWidth, flitClockCycles, frequency,
+		DistTime distTime = new DistTime(flitClockCycles,
 				packetSize, totalNPcks, Rate);
 
-		ArrayList<String> vet = distTime.uniform();
+		List<Integer> timeStamps = distTime.uniform();
 
 		try {
 
@@ -112,7 +112,7 @@ public class Generate {
 				 * /*******************************************
 				 * *******************************************
 				 */
-				linha = linha.concat((String) vet.get(j) + " ");
+				linha = linha.concat(Integer.toHexString(timeStamps.get(j)).toUpperCase() + " ");
 				
 
 				/***************************************************************************************/
@@ -185,7 +185,7 @@ public class Generate {
 				 * 4o - 7o FLITS = TIMESTAMP HEXA /**************************
 				 * ************************************************************
 				 */
-				timestampHex = getTimestamp((String) vet.get(j));
+				timestampHex = getTimestamp(Integer.toHexString(timeStamps.get(j)).toUpperCase());
 				linha = linha.concat(timestampHex[3] + " " + timestampHex[2]
 						+ " " + timestampHex[1] + " " + timestampHex[0] + " ");
 				
