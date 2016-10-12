@@ -2,27 +2,24 @@ import java.util.*;
 
 public class DistTime {
 
-	private double channelRate;
-	private double packetTime;
 	private int numberOfPackets;
-	private double ipRate;
+	private double totalTime;
 
-	public DistTime(int flitWidth, int flitClockCycles, double frequency, int packetSize, int numOfPackets, double rate) {
-		channelRate = frequency * flitWidth;
-		packetTime = packetSize * flitClockCycles;
+	public DistTime(int flitClockCycles, int packetSize, int numOfPackets, double rate) {
+		double packetTime = packetSize * flitClockCycles;
+		double idleTime = Math.rint((100 / rate - 1) * packetTime);
+		totalTime = idleTime + packetTime;
 		numberOfPackets = numOfPackets;
-		ipRate = (rate / 100) * channelRate;
 	}
 
-	public ArrayList<String> uniform() {
-		double idleTime = ((channelRate / ipRate - 1) * packetTime);
-		double totalTime = Math.rint(idleTime) + packetTime;
-		double timestamp = 1;
-		ArrayList<String> vet = new ArrayList<String>();
+	public List<Integer> uniform() {
+		List<Integer> timeStamps = new ArrayList<>();
+		double timeStamp = 1;
 		for (int j = 0; j < numberOfPackets; j++) {
-			vet.add(Integer.toHexString((int) timestamp).toUpperCase());
-			timestamp = timestamp + totalTime;
+			timeStamps.add((int) timeStamp);
+			timeStamp += totalTime;
 		}
-		return vet;
+
+		return timeStamps;
 	}
 }
