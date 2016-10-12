@@ -1,7 +1,7 @@
 
 public class DistSpatial {
 
-	private int tam;
+	private int numberOfBits;
 	private int dimX;
 	private int dimY;
 	private int flitWidth;
@@ -11,25 +11,8 @@ public class DistSpatial {
 		this.dimX = dimX;
 		this.dimY = dimY;
 		this.flitWidth = flitWidth;
-
-		tam = 0; // tam � o n�mero m�nino de bits capaz de representar os
-					// endere�os da rede.
-		if ((dimX * dimY) == 4)
-			tam = 2;
-		else if ((dimX * dimY) == 8)
-			tam = 3;
-		else if ((dimX * dimY) == 16)
-			tam = 4;
-		else if ((dimX * dimY) == 32)
-			tam = 5;
-		else if ((dimX * dimY) == 64)
-			tam = 6;
-		else if ((dimX * dimY) == 128)
-			tam = 7;
-		else
-			tam = 8;
-
-		c = new char[tam];
+		numberOfBits = (int) Math.ceil((Math.log((dimX * dimY)) / Math.log(2)));
+		c = new char[numberOfBits];
 	}
 
 	/**
@@ -83,20 +66,20 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
-		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (numberOfBits / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (numberOfBits / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
-		for (int i = 0; i < tam; i++) { // inverte os bits
-			if (targetBin.charAt(tam - 1 - i) == '1')
+		for (int i = 0; i < numberOfBits; i++) { // inverte os bits
+			if (targetBin.charAt(numberOfBits - 1 - i) == '1')
 				c[i] = '1';
 			else
 				c[i] = '0';
 		}
 		targetBin = new String(c); // converte char em string
 		// System.out.println(" Bit reversal targetBin="+targetBin);
-		targetXBin = targetBin.substring(0, tam / 2);
-		targetYBin = targetBin.substring(tam / 2);
+		targetXBin = targetBin.substring(0, numberOfBits / 2);
+		targetYBin = targetBin.substring(numberOfBits / 2);
 		targetX = Integer.parseInt(targetXBin, 2);
 		targetY = Integer.parseInt(targetYBin, 2);
 		return Conversion.formatAddress(targetX, targetY, flitWidth);
@@ -111,23 +94,23 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
-		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (numberOfBits / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (numberOfBits / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 
-		for (int i = 0; i < tam; i++) { // copia todo o endereco binario
+		for (int i = 0; i < numberOfBits; i++) { // copia todo o endereco binario
 			c[i] = targetBin.charAt(i);
 		}
-		c[0] = targetBin.charAt(tam - 1); // grava o ultimo bit na posi��o do
+		c[0] = targetBin.charAt(numberOfBits - 1); // grava o ultimo bit na posi��o do
 											// primeiro
-		c[tam - 1] = targetBin.charAt(0); // grava o primeiro bit na posi��o do
+		c[numberOfBits - 1] = targetBin.charAt(0); // grava o primeiro bit na posi��o do
 											// ultimo
 
 		targetBin = new String(c); // converte char em string
 		// System.out.println(" Butterfly targetBin="+targetBin);
-		targetXBin = targetBin.substring(0, tam / 2);
-		targetYBin = targetBin.substring(tam / 2);
+		targetXBin = targetBin.substring(0, numberOfBits / 2);
+		targetYBin = targetBin.substring(numberOfBits / 2);
 		targetX = Integer.parseInt(targetXBin, 2);
 		targetY = Integer.parseInt(targetYBin, 2);
 		return Conversion.formatAddress(targetX, targetY, flitWidth);
@@ -141,12 +124,12 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
-		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (numberOfBits / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (numberOfBits / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 
-		for (int i = 0; i < tam; i++) { // copia todo o endereco binario
+		for (int i = 0; i < numberOfBits; i++) { // copia todo o endereco binario
 			if (targetBin.charAt(i) == '1')
 				c[i] = '0';
 			else
@@ -155,8 +138,8 @@ public class DistSpatial {
 
 		targetBin = new String(c); // converte char em string
 		// System.out.println(" Complemento targetBin= "+targetBin);
-		targetXBin = targetBin.substring(0, tam / 2);
-		targetYBin = targetBin.substring(tam / 2);
+		targetXBin = targetBin.substring(0, numberOfBits / 2);
+		targetYBin = targetBin.substring(numberOfBits / 2);
 		targetX = Integer.parseInt(targetXBin, 2);
 		targetY = Integer.parseInt(targetYBin, 2);
 		return Conversion.formatAddress(targetX, targetY, flitWidth);
@@ -180,17 +163,17 @@ public class DistSpatial {
 		String targetXBin, targetYBin, targetBin;
 		int targetX, targetY;
 
-		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (tam / 2));
-		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (tam / 2));
+		targetXBin = Conversion.zeroLeftPad(Integer.toBinaryString(addX), (numberOfBits / 2));
+		targetYBin = Conversion.zeroLeftPad(Integer.toBinaryString(addY), (numberOfBits / 2));
 		targetBin = targetXBin + targetYBin; // concatena targetX e targetY;
 		// System.out.print("targetBin="+targetBin);
 
-		for (int i = 0; i < tam; i++) { // copia todo o endereco binario
+		for (int i = 0; i < numberOfBits; i++) { // copia todo o endereco binario
 			if (i == 0) {
 				if (targetBin.charAt(i) == '1')
-					c[tam - 1] = '1';
+					c[numberOfBits - 1] = '1';
 				else
-					c[tam - 1] = '0';
+					c[numberOfBits - 1] = '0';
 			} else {
 				if (targetBin.charAt(i) == '1')
 					c[i - 1] = '1';
@@ -201,8 +184,8 @@ public class DistSpatial {
 
 		targetBin = new String(c); // converte char em string
 		// System.out.println(" Complemento targetBin="+targetBin);
-		targetXBin = targetBin.substring(0, tam / 2);
-		targetYBin = targetBin.substring(tam / 2);
+		targetXBin = targetBin.substring(0, numberOfBits / 2);
+		targetYBin = targetBin.substring(numberOfBits / 2);
 		targetX = Integer.parseInt(targetXBin, 2);
 		targetY = Integer.parseInt(targetYBin, 2);
 		return Conversion.formatAddress(targetX, targetY, flitWidth);
