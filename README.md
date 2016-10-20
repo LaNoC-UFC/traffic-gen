@@ -3,7 +3,7 @@ TrafficGenerator for NoCs
 
 traffic-gen is a tool capable of generate traffic (as text files)
 that act as input to mesh-like (2D) networks-on-chip of any size.
-It's mainly based on the [Atlas Performance Evaluation tool](https://corfu.pucrs.br/redmine/projects/atlas/wiki/Performance_Evaluation).
+It's mainly based on the [Atlas Traffic Generation tool](https://corfu.pucrs.br/redmine/projects/atlas/wiki/Traffic_Mbps).
 
 The networks currently supported are [Phoenix](https://github.com/LaNoC-UFC/Phoenix) and [Thor](https://github.com/LaNoC-UFC/NoCThor).
 
