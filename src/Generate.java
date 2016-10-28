@@ -63,18 +63,18 @@ public class Generate {
             for (int j = 0; j < totalNPcks; j++) {
                 line = "";
                 /***************************************************************************************/
-				/*
-				 * TIMESTAMP INICIAL
-				 * /*******************************************
-				 * *******************************************
-				 */
+                /*
+                 * TIMESTAMP INICIAL
+                 * /*******************************************
+                 * *******************************************
+                 */
                 line = line.concat(Integer.toHexString(timeStamps.get(j)).toUpperCase() + " ");
                 /***************************************************************************************/
-				/*
-				 * 1� FLIT = PRIORITY (HIGH) + TARGET (LOW) /******************
-				 * *******************************************
-				 * *************************
-				 */
+                /*
+                 * 1� FLIT = PRIORITY (HIGH) + TARGET (LOW) /******************
+                 * *******************************************
+                 * *************************
+                 */
                 // priority = Conversion.decimal_hexa(priorityO, (flitWidth /
                 // 8));
                 String target = sinks.get((sourceX * totalNPcks) + (sourceY * totalNPcks * dimX) + j);
@@ -100,10 +100,10 @@ public class Generate {
                 int iTarget = sinkN;
                 line = line.concat(/* priority + */target + " ");
                 /***************************************************************************************/
-				/*
-				 * 2o FLIT = SIZE /********************************************
-				 * ******************************************
-				 */
+                /*
+                 * 2o FLIT = SIZE /********************************************
+                 * ******************************************
+                 */
                 int payloadSize = packetSize - 6; // 6 pq 2 s�o header e 4 s�o o
                 // timestampHex da rede inserido
                 // pelo fli
@@ -112,26 +112,26 @@ public class Generate {
                 nPackets[iTarget]++;
                 nFlits[iTarget] += packetSize;
                 /***************************************************************************************/
-				/*
-				 * 3o FLIT = SOURCE /******************************************
-				 * ********************************************
-				 */
+                /*
+                 * 3o FLIT = SOURCE /******************************************
+                 * ********************************************
+                 */
 
                 line = line.concat(Conversion.formatAddress(sourceX, sourceY, flitWidth) + " ");
                 /***************************************************************************************/
-				/*
-				 * 4o - 7o FLITS = TIMESTAMP HEXA /**************************
-				 * ************************************************************
-				 */
+                /*
+                 * 4o - 7o FLITS = TIMESTAMP HEXA /**************************
+                 * ************************************************************
+                 */
                 String[] timestampHex = getTimestamp(Integer.toHexString(timeStamps.get(j)).toUpperCase());
                 line = line.concat(timestampHex[3] + " " + timestampHex[2]
                         + " " + timestampHex[1] + " " + timestampHex[0] + " ");
                 /***************************************************************************************/
-				/*
-				 * 8o AND 9o FLIT = SEQUENCE NUMBER /************************
-				 * *************************************
-				 * *************************
-				 */
+                /*
+                 * 8o AND 9o FLIT = SEQUENCE NUMBER /************************
+                 * *************************************
+                 * *************************
+                 */
                 if(!(j<warmupPcks || j>=totalNPcks-warmupPcks)) {
                     line = line.concat(addLineByte(Integer.toHexString(sequenceNumberH).toUpperCase()," "));
                     line = line.concat(addLineByte(Integer.toHexString(sequenceNumberL).toUpperCase(),""));
@@ -147,34 +147,34 @@ public class Generate {
                     line = line.concat(addLineByte("",""));
                 }
                 /***************************************************************************************/
-				/*
-				 * PAYLOAD
-				 * /*****************************************************
-				 * *********************************
-				 */
-				/*
-				if (j == 0) {
-					counter = 8;
-					for (int l = counter; l <= payloadSize; l++) {
+                /*
+                 * PAYLOAD
+                 * /*****************************************************
+                 * *********************************
+                 */
+                /*
+                if (j == 0) {
+                    counter = 8;
+                    for (int l = counter; l <= payloadSize; l++) {
 
-						if (l == payloadSize) // nao coloca espaco se eh o
-												// ultimo flit do payload
-							payload = payload.concat(addLineByte(Integer
-									.toHexString(0).toUpperCase(), ""));
-						else
-							payload = payload.concat(addLineByte(Integer
-									.toHexString(counter).toUpperCase(), " "));
+                        if (l == payloadSize) // nao coloca espaco se eh o
+                                                // ultimo flit do payload
+                            payload = payload.concat(addLineByte(Integer
+                                    .toHexString(0).toUpperCase(), ""));
+                        else
+                            payload = payload.concat(addLineByte(Integer
+                                    .toHexString(counter).toUpperCase(), " "));
 
-						// variando os dados do pacote
-						if (counter == Math.pow(2, flitWidth))
-							counter = 0;
-						else
-							counter++;
-					}
+                        // variando os dados do pacote
+                        if (counter == Math.pow(2, flitWidth))
+                            counter = 0;
+                        else
+                            counter++;
+                    }
 
-				}
-				line = line.concat(payload);
-				*/
+                }
+                line = line.concat(payload);
+                */
                 dataOutput.writeBytes(line + "\r\n");
             }
         } catch (IOException e) {
@@ -254,13 +254,13 @@ public class Generate {
             }
             output.close();
 
-			/*
-			FileWriter fw = new FileWriter(new File(path + "nPcksHash"));
-			for (String key : numberOfPacks.keySet()) {
-				fw.write(key + " " + numberOfPacks.get(key) + "\n");
-			}
-			fw.close();
-			*/
+            /*
+            FileWriter fw = new FileWriter(new File(path + "nPcksHash"));
+            for (String key : numberOfPacks.keySet()) {
+                fw.write(key + " " + numberOfPacks.get(key) + "\n");
+            }
+            fw.close();
+            */
 
         } catch (IOException e) {
             e.printStackTrace();
