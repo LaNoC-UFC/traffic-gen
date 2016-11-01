@@ -81,6 +81,7 @@ public class Generate {
                 if(target.equals(Conversion.formatAddress(sourceX, sourceY, flitWidth))) {
                     break;
                 }
+
                 // Get the number of pcks per flux
                 String HashKey = sourceX + "." + sourceY + " " + target;
                 int sourceN = sourceX + sourceY * dimX;
